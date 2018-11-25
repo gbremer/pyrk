@@ -28,11 +28,13 @@ class Flibe(LiquidMaterial):
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
         """
-        LiquidMaterial.__init__(self,
-                                name=name,
-                                k=self.thermal_conductivity(),
-                                cp=self.specific_heat_capacity(),
-                                dm=self.density())
+        LiquidMaterial.__init__(
+            self,
+            name=name,
+            k=self.thermal_conductivity(),
+            cp=self.specific_heat_capacity(),
+            dm=self.density(),
+        )
 
     def thermal_conductivity(self):
         """FLiBe thermal conductivity in [W/m-K]
@@ -50,7 +52,8 @@ class Flibe(LiquidMaterial):
         FLiBe density as a funciton of T. [kg/m^3]
 
         """
-        return DensityModel(a=2413.2172 * units.kg / (units.meter**3),
-                            b=-0.488 * units.kg /
-                            (units.meter**3) / units.kelvin,
-                            model="linear")
+        return DensityModel(
+            a=2413.2172 * units.kg / (units.meter ** 3),
+            b=-0.488 * units.kg / (units.meter ** 3) / units.kelvin,
+            model="linear",
+        )

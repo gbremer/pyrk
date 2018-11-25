@@ -14,11 +14,17 @@ class Neutronics(object):
     neutronics subblock
     """
 
-    def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 n_fic=0,
-                 timer=Timer(),
-                 rho_ext=None,
-                 feedback=False):
+    def __init__(
+        self,
+        iso="u235",
+        e="thermal",
+        n_precursors=6,
+        n_decay=11,
+        n_fic=0,
+        timer=Timer(),
+        rho_ext=None,
+        feedback=False,
+    ):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -39,16 +45,14 @@ class Neutronics(object):
         :returns: A Neutronics object that holds neutronics simulation info
         """
 
-        self._iso = v.validate_supported("iso", iso,
-                                         ['u235', 'pu239', 'sfr', 'fhr'])
+        self._iso = v.validate_supported("iso", iso, ["u235", "pu239", "sfr", "fhr"])
         """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr', "fhr"
         are supported."""
 
-        self._e = v.validate_supported("e", e, ['thermal', 'fast', 'multipt'])
+        self._e = v.validate_supported("e", e, ["thermal", "fast", "multipt"])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
 
-        self._npg = v.validate_supported(
-            "n_precursors", n_precursors, [6, 8, 0])
+        self._npg = v.validate_supported("n_precursors", n_precursors, [6, 8, 0])
         """_npg (int): Number of neutron precursor groups. 6 is supported."""
 
         self._ndg = v.validate_supported("n_decay", n_decay, [11, 0])
@@ -149,7 +153,7 @@ class Neutronics(object):
         if self.feedback and t_idx > self._timer.t_idx_feedback:
             for component in components:
                 rho[component.name] = component.temp_reactivity(t_idx)
-        rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
+        rho["external"] = self._rho_ext(t_idx=t_idx).to("delta_k")
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
         return to_ret
@@ -158,18 +162,20 @@ class Neutronics(object):
         """A recorder function to hold total and external reactivity
         """
         t = self._timer.current_timestep() - 1
-        rec = {'t_idx': t,
-               'rho_tot': self._rho[t],
-               'rho_ext':
-               self._rho_ext(t_idx=t).to('delta_k').magnitude
-              }
+        rec = {
+            "t_idx": t,
+            "rho_tot": self._rho[t],
+            "rho_ext": self._rho_ext(t_idx=t).to("delta_k").magnitude,
+        }
         return rec
 
     def metadata(self, component):
         """A recorder function to hold reactivity in each component
         """
         timestep = self._timer.current_timestep() - 1
-        rec = {'t_idx': timestep,
-               'component': component.name,
-               'rho': component.temp_reactivity(timestep)}
+        rec = {
+            "t_idx": timestep,
+            "component": component.name,
+            "rho": component.temp_reactivity(timestep),
+        }
         return rec

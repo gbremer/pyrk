@@ -25,11 +25,13 @@ class SS316(Material):
         :param heatgen: is this material a heat generator (fuel)
         :type heatgen: bool
         """
-        Material.__init__(self,
-                          name=name,
-                          k=self.thermal_conductivity(),
-                          cp=self.specific_heat_capacity(),
-                          dm=self.density())
+        Material.__init__(
+            self,
+            name=name,
+            k=self.thermal_conductivity(),
+            cp=self.specific_heat_capacity(),
+            dm=self.density(),
+        )
 
     def thermal_conductivity(self):
         """SS316 thermal conductivity in [W/m-K]
@@ -52,5 +54,4 @@ class SS316(Material):
         SS316 density in [kg/m^3]
         from asm.matweb.com
         """
-        return DensityModel(a=8000.0 * units.kg / (units.meter**3),
-                            model="constant")
+        return DensityModel(a=8000.0 * units.kg / (units.meter ** 3), model="constant")

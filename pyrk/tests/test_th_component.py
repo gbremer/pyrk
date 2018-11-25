@@ -8,13 +8,14 @@ from pyrk.materials.material import Material
 from pyrk import density_model
 
 name = "testname"
-vol = 20 * units.meter**3
+vol = 20 * units.meter ** 3
 k = 10 * units.watt / units.meter / units.kelvin
 cp = 10 * units.joule / units.kg / units.kelvin
-dm = density_model.DensityModel(a=0 * units.kg / units.meter**3,
-                                b=100 * units.kg / units.kelvin /
-                                pow(units.meter, 3),
-                                model='constant')
+dm = density_model.DensityModel(
+    a=0 * units.kg / units.meter ** 3,
+    b=100 * units.kg / units.kelvin / pow(units.meter, 3),
+    model="constant",
+)
 mat = Material(k=k, cp=cp, dm=dm)
 
 
@@ -26,8 +27,16 @@ tfeedback = 5 * units.seconds
 dt = 0.1 * units.seconds
 ti = Timer(t0=t0, tf=tf, dt=dt, t_feedback=tfeedback)
 tester = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti)
-tester_sph = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti,
-                            sph=True, ri=0 * units.meter, ro=1 * units.meter)
+tester_sph = th.THComponent(
+    name=name,
+    mat=mat,
+    vol=vol,
+    T0=T0,
+    timer=ti,
+    sph=True,
+    ri=0 * units.meter,
+    ro=1 * units.meter,
+)
 
 
 def test_constructor():

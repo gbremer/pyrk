@@ -8,8 +8,8 @@ T0 = 0.0 * units.kelvin
 k_default = 0 * units.watt / (units.meter * units.kelvin)
 cp_default = 0.0 * units.joule / (units.kg * units.kelvin)
 mu_default = 0.0 * units.pascal * units.second
-rho_at_time_zero = 0.0 * units.kg / units.meter**3
-rho_at_temp_zero = 0.0 * units.kg / units.meter**3
+rho_at_time_zero = 0.0 * units.kg / units.meter ** 3
+rho_at_temp_zero = 0.0 * units.kg / units.meter ** 3
 
 name = "defaulttestname"
 defaultLiq = liquid_material.LiquidMaterial(name=name)
@@ -17,8 +17,7 @@ defaultLiq = liquid_material.LiquidMaterial(name=name)
 T0_test = 0.0 * units.kelvin
 k_test = 0 * units.watt / (units.meter * units.kelvin)
 cp_test = 0.0 * units.joule / (units.kg * units.kelvin)
-rho_test = DensityModel(a=1740.0 * units.kg /
-                        (units.meter**3), model="constant")
+rho_test = DensityModel(a=1740.0 * units.kg / (units.meter ** 3), model="constant")
 name_test = "testname"
 
 
@@ -32,9 +31,9 @@ def test_constructor_liq():
 
 
 def test_all_vars_avail_liquid():
-    tester = liquid_material.LiquidMaterial(name_test, k_test,
-                                            cp_test, rho_test,
-                                            mu_default)
+    tester = liquid_material.LiquidMaterial(
+        name_test, k_test, cp_test, rho_test, mu_default
+    )
     assert_equal(tester.name, name_test)
     assert_equal(tester.k, k_test)
     assert_equal(tester.cp, cp_test)
@@ -44,6 +43,5 @@ def test_all_vars_avail_liquid():
 
 
 def test_missing_mu():
-    tester = liquid_material.LiquidMaterial(
-        name_test, k_test, cp_test, dm=rho_test)
+    tester = liquid_material.LiquidMaterial(name_test, k_test, cp_test, dm=rho_test)
     assert_equal(tester.name, name_test)

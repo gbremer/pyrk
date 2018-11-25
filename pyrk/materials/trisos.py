@@ -9,8 +9,16 @@ class Triso(THComponent):
     support of calculations related to the thermal hydraulics subblock
     """
 
-    def __init__(self, name=None, vol=0, T0=0,
-                 alpha_temp=0, timesteps=0, heatgen=True, power_tot=0):
+    def __init__(
+        self,
+        name=None,
+        vol=0,
+        T0=0,
+        alpha_temp=0,
+        timesteps=0,
+        heatgen=True,
+        power_tot=0,
+    ):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -27,17 +35,19 @@ class Triso(THComponent):
         :param heatgen: is this component a heat generator (fuel)
         :type heatgen: bool
         """
-        THComponent.__init__(self,
-                             name=name,
-                             vol=vol,
-                             k=self.thermal_conductivity(),
-                             cp=self.specific_heat_capacity(),
-                             dm=self.density(),
-                             T0=T0,
-                             alpha_temp=alpha_temp,
-                             timesteps=timesteps,
-                             heatgen=heatgen,
-                             power_tot=power_tot)
+        THComponent.__init__(
+            self,
+            name=name,
+            vol=vol,
+            k=self.thermal_conductivity(),
+            cp=self.specific_heat_capacity(),
+            dm=self.density(),
+            T0=T0,
+            alpha_temp=alpha_temp,
+            timesteps=timesteps,
+            heatgen=heatgen,
+            power_tot=power_tot,
+        )
 
     def thermal_conductivity(self):
         """Triso thermal conductivity in [W/m-K]
@@ -54,5 +64,4 @@ class Triso(THComponent):
         return 1650.0 * units.joule / (units.kg * units.kelvin)
 
     def density(self):
-        return DensityModel(a=10500. * units.kg / (units.meter**3),
-                            model="constant")
+        return DensityModel(a=10500.0 * units.kg / (units.meter ** 3), model="constant")

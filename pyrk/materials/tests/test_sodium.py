@@ -14,9 +14,9 @@ cp_Na = 1300.0 * units.joule / (units.kg * units.kelvin)
 
 
 def test_constructor():
-    '''
+    """
     TODO: test density
-    '''
+    """
     assert_equal(tester.name, name)
     assert_equal(tester.k, k_Na)
     assert_equal(tester.cp, cp_Na)

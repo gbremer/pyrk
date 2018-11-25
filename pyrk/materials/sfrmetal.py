@@ -18,17 +18,19 @@ class SFRMetal(Material):
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
         """
-        Material.__init__(self,
-                          name=name,
-                          k=self.thermal_conductivity(),
-                          cp=self.specific_heat_capacity(),
-                          dm=self.density())
+        Material.__init__(
+            self,
+            name=name,
+            k=self.thermal_conductivity(),
+            cp=self.specific_heat_capacity(),
+            dm=self.density(),
+        )
 
     def thermal_conductivity(self):
         """SFRMetal thermal conductivity in [W/m-K]
         """
         to_ret = 0.16 * units.watt / (units.centimeter * units.kelvin)
-        return to_ret.to('watt/meter/kelvin')
+        return to_ret.to("watt/meter/kelvin")
 
     def specific_heat_capacity(self):
         """Specific heat capacity of SFRMetal [J/kg/K]
@@ -46,12 +48,11 @@ class SFRMetal(Material):
         based on table 1.1-5 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
         """
         to_ret = 0.17 * units.joule / (units.g * units.kelvin)
-        return to_ret.to('J/kg/kelvin')
+        return to_ret.to("J/kg/kelvin")
 
     def density(self):
         """
         SFRMetal density as a funciton of T. [kg/m^3]
 
         """
-        return DensityModel(a=14.1 * units.gram /
-                            units.cm**3, model='constant')
+        return DensityModel(a=14.1 * units.gram / units.cm ** 3, model="constant")

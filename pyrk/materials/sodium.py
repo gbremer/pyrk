@@ -14,11 +14,13 @@ class Sodium(LiquidMaterial):
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
         """
-        LiquidMaterial.__init__(self,
-                                name=name,
-                                k=self.thermal_conductivity(),
-                                cp=self.specific_heat_capacity(),
-                                dm=self.density())
+        LiquidMaterial.__init__(
+            self,
+            name=name,
+            k=self.thermal_conductivity(),
+            cp=self.specific_heat_capacity(),
+            dm=self.density(),
+        )
 
     def thermal_conductivity(self):
         """Sodium thermal conductivity in [W/m-K]
@@ -54,7 +56,7 @@ class Sodium(LiquidMaterial):
         based on table 1.1-5 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
         """
         to_ret = 1.3 * units.kilojoule / (units.kg * units.kelvin)
-        return to_ret.to('J/kg/kelvin')
+        return to_ret.to("J/kg/kelvin")
 
     def density(self):
         """
@@ -130,9 +132,12 @@ class SodiumDensity(DensityModel):
         :type temp: Quantity (units of kelvin)
 
         """
-        to_ret = self.rho_c + self.f * (1 - temp / self.T_c) + \
-            self.g * pow((1 - temp / self.T_c), self.h)
-        return to_ret.to('kg/m**3')
+        to_ret = (
+            self.rho_c
+            + self.f * (1 - temp / self.T_c)
+            + self.g * pow((1 - temp / self.T_c), self.h)
+        )
+        return to_ret.to("kg/m**3")
 
     def rho(self, temp=0.0 * units.kelvin):
         return self.hornung(temp)

@@ -7,13 +7,15 @@ class ConvectiveModel(object):
     This class defines the model for convective heat transfer coefficient: h
     """
 
-    def __init__(self,
-                 h0=0 * units.watt / units.meter**2 / units.kelvin,
-                 mat=LiquidMaterial(),
-                 m_flow=None,
-                 a_flow=None,
-                 length_scale=None,
-                 model="constant"):
+    def __init__(
+        self,
+        h0=0 * units.watt / units.meter ** 2 / units.kelvin,
+        mat=LiquidMaterial(),
+        m_flow=None,
+        a_flow=None,
+        length_scale=None,
+        model="constant",
+    ):
         """
         Initializes the DensityModel object.
 
@@ -39,8 +41,7 @@ class ConvectiveModel(object):
         self.a_flow = a_flow
         self.length_scale = length_scale
 
-        self.implemented = {'constant': self.constant,
-                            'wakao': self.wakao}
+        self.implemented = {"constant": self.constant, "wakao": self.wakao}
 
         if model in self.implemented.keys():
             self.model = model
@@ -53,8 +54,9 @@ class ConvectiveModel(object):
                 msg += m
             raise ValueError(msg)
 
-    def h(self, rho=0 * units.kg / units.meter**3,
-          mu=0 * units.pascal * units.second):
+    def h(
+        self, rho=0 * units.kg / units.meter ** 3, mu=0 * units.pascal * units.second
+    ):
         """
         Returns the convective heat transfer coefficient
 
@@ -63,8 +65,9 @@ class ConvectiveModel(object):
         :param mu: The dynamic viscosity of the object
         :type mu: float
         """
-        return self.implemented[self.model](rho.to(units.kg / units.meter**3),
-                                            mu.to(units.pascal * units.second))
+        return self.implemented[self.model](
+            rho.to(units.kg / units.meter ** 3), mu.to(units.pascal * units.second)
+        )
 
     def constant(self, rho, mu):
         """
@@ -89,6 +92,6 @@ class ConvectiveModel(object):
         u = self.m_flow / self.a_flow / rho
         Re = rho * self.length_scale * u / self.mu
         Pr = self.cp * self.mu / self.k
-        Nu = 2 + 1.1 * Pr.magnitude ** (1 / 3.0) * Re.magnitude**0.6
+        Nu = 2 + 1.1 * Pr.magnitude ** (1 / 3.0) * Re.magnitude ** 0.6
         ret = Nu * self.k / self.length_scale
         return ret

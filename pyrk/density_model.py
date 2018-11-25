@@ -8,10 +8,12 @@ class DensityModel(object):
     TODO: It would be great to implement a model that handles dpa.
     """
 
-    def __init__(self,
-                 a=0 * units.kg / pow(units.meter, 3),
-                 b=0 * units.kg / units.kelvin / pow(units.meter, 3),
-                 model="linear"):
+    def __init__(
+        self,
+        a=0 * units.kg / pow(units.meter, 3),
+        b=0 * units.kg / units.kelvin / pow(units.meter, 3),
+        model="linear",
+    ):
         """
         Initializes the DensityModel object.
 
@@ -25,8 +27,7 @@ class DensityModel(object):
         self.a = a.to(units.kg / pow(units.meter, 3))
         self.b = b.to(units.kg / units.kelvin / pow(units.meter, 3))
 
-        self.implemented = {'constant': self.constant,
-                            'linear': self.linear}
+        self.implemented = {"constant": self.constant, "linear": self.linear}
 
         if model in self.implemented.keys():
             self.model = model

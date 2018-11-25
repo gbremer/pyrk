@@ -3,8 +3,7 @@
 This module contains errors/exceptions and warnings needed globally in the pyrk
 module. Subclass-specific exceptions should appear in their own subclass
 """
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 
 class pyrkWarning(Warning):

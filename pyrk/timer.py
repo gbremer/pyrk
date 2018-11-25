@@ -2,17 +2,20 @@ import numpy as np
 from pyrk.inp import validation
 from pyrk.utilities.ur import units
 import logging
+
 log = logging.getLogger(__name__)
 
 
 class Timer(object):
     """This class holds information about time"""
 
-    def __init__(self,
-                 t0=0.0 * units.seconds,
-                 tf=1.0 * units.seconds,
-                 dt=1.0 * units.seconds,
-                 t_feedback=0.0 * units.seconds):
+    def __init__(
+        self,
+        t0=0.0 * units.seconds,
+        tf=1.0 * units.seconds,
+        dt=1.0 * units.seconds,
+        t_feedback=0.0 * units.seconds,
+    ):
         """Initialize the timer object. There should be only one.
 
         :param t0: first times in the simulation
@@ -26,10 +29,10 @@ class Timer(object):
         self.t_feedback = validation.validate_ge("t_feedback", t_feedback, t0)
         self.tf = validation.validate_ge("tf", tf, t_feedback)
         self.dt = validation.validate_g("dt", dt, 0.0 * units.seconds)
-        self.series = units.Quantity(np.linspace(start=t0.magnitude,
-                                                 stop=tf.magnitude,
-                                                 num=self.timesteps()),
-                                     'seconds')
+        self.series = units.Quantity(
+            np.linspace(start=t0.magnitude, stop=tf.magnitude, num=self.timesteps()),
+            "seconds",
+        )
         self.ts = 0
         self.t_idx_feedback = self.t_idx(t_feedback)
 
@@ -82,7 +85,7 @@ class Timer(object):
         """
         new_ts = self.t_idx(time)
         old_ts = self.ts
-        if (abs(new_ts - old_ts) > 1):
+        if abs(new_ts - old_ts) > 1:
             msg = "At timestep "
             msg += str(self.ts)
             msg += ", which translates to time ("

@@ -1,11 +1,11 @@
-''' changed from the initial input file
+""" changed from the initial input file
 to represent a simplified model for the FHR core
 
 The simulation has 3 stages:
 - initial temperature without feedback
 - turn on feedback
 - turn on external reactivity
-'''
+"""
 
 from utilities.ur import units
 import th_component as th
@@ -49,13 +49,13 @@ kappa = 0.0
 
 
 def area_sphere(r):
-    assert(r >= 0 * units.meter)
-    return (4.0) * math.pi * pow(r.to('meter'), 2)
+    assert r >= 0 * units.meter
+    return (4.0) * math.pi * pow(r.to("meter"), 2)
 
 
 def vol_sphere(r):
-    assert(r >= 0 * units.meter)
-    return (4. / 3.) * math.pi * pow(r.to('meter'), 3)
+    assert r >= 0 * units.meter
+    return (4.0 / 3.0) * math.pi * pow(r.to("meter"), 3)
 
 
 # volumes
@@ -104,111 +104,109 @@ feedback = True
 
 # External Reactivity
 from reactivity_insertion import RampReactivityInsertion
+
 # from reactivity_insertion import StepReactivityInsertion
 # rho_ext = StepReactivityInsertion(timer=ti,
 #                                  t_step=t_feedback + 10.0*units.seconds,
 #                                  rho_init=0.0*units.delta_k,
 #                                  rho_final=600.0*units.pcm)
 
-rho_ext = RampReactivityInsertion(timer=ti,
-                                  t_start=t_feedback + 10.0 * units.seconds,
-                                  t_end=t_feedback + 15.0 * units.seconds,
-                                  rho_init=0.0 * units.delta_k,
-                                  rho_rise=650.0 * units.pcm,
-                                  rho_final=650.0 * units.pcm)
+rho_ext = RampReactivityInsertion(
+    timer=ti,
+    t_start=t_feedback + 10.0 * units.seconds,
+    t_end=t_feedback + 15.0 * units.seconds,
+    rho_init=0.0 * units.delta_k,
+    rho_rise=650.0 * units.pcm,
+    rho_final=650.0 * units.pcm,
+)
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
 
 k_mod = 17 * units.watt / (units.meter * units.kelvin)
 cp_mod = 1650.0 * units.joule / (units.kg * units.kelvin)
-rho_mod = DensityModel(a=1740. * units.kg / (units.meter**3), model="constant")
-Moderator = Material('mod', k_mod, cp_mod, rho_mod)
+rho_mod = DensityModel(a=1740.0 * units.kg / (units.meter ** 3), model="constant")
+Moderator = Material("mod", k_mod, cp_mod, rho_mod)
 
 k_fuel = 15 * units.watt / (units.meter * units.kelvin)
 cp_fuel = 1818.0 * units.joule / units.kg / units.kelvin
-rho_fuel = DensityModel(a=2220.0 * units.kg /
-                        (units.meter**3), model="constant")
-Fuel = Material('fuel', k_fuel, cp_fuel, rho_fuel)
+rho_fuel = DensityModel(a=2220.0 * units.kg / (units.meter ** 3), model="constant")
+Fuel = Material("fuel", k_fuel, cp_fuel, rho_fuel)
 
 k_shell = 17 * units.watt / (units.meter * units.kelvin)
 cp_shell = 1650.0 * units.joule / (units.kg * units.kelvin)
-rho_shell = DensityModel(a=1740. * units.kg /
-                         (units.meter**3), model="constant")
-Shell = Material('shell', k_shell, cp_shell, rho_shell)
+rho_shell = DensityModel(a=1740.0 * units.kg / (units.meter ** 3), model="constant")
+Shell = Material("shell", k_shell, cp_shell, rho_shell)
 
 k_cool = 1 * units.watt / (units.meter * units.kelvin)
 cp_cool = 2415.78 * units.joule / (units.kg * units.kelvin)
-rho_cool = DensityModel(a=2415.6 *
-                        units.kg /
-                        (units.meter**3), b=0.49072 *
-                        units.kg /
-                        (units.meter**3) /
-                        units.kelvin, model="linear")
+rho_cool = DensityModel(
+    a=2415.6 * units.kg / (units.meter ** 3),
+    b=0.49072 * units.kg / (units.meter ** 3) / units.kelvin,
+    model="linear",
+)
 mu0 = 0 * units.pascal * units.second
-cool = LiquidMaterial('cool', k_cool, cp_cool, rho_cool, mu0)
+cool = LiquidMaterial("cool", k_cool, cp_cool, rho_cool, mu0)
 
 # Coolant flow properties
 # 4700TODO implement h(T) model
 h_cool = ConvectiveModel(
-    h0=4700.0 *
-    units.watt /
-    units.kelvin /
-    units.meter**2,
-    mat=cool,
-    model='constant')
+    h0=4700.0 * units.watt / units.kelvin / units.meter ** 2, mat=cool, model="constant"
+)
 m_flow = 976.0 * units.kg / units.seconds
 t_inlet = units.Quantity(600.0, units.degC)
 
-mod = th.THComponent(name="mod",
-                     mat=Moderator,
-                     vol=vol_mod,
-                     T0=t_mod,
-                     alpha_temp=alpha_mod,
-                     timer=ti,
-                     sph=True,
-                     ri=0.0 * units.meter,
-                     ro=r_mod)
+mod = th.THComponent(
+    name="mod",
+    mat=Moderator,
+    vol=vol_mod,
+    T0=t_mod,
+    alpha_temp=alpha_mod,
+    timer=ti,
+    sph=True,
+    ri=0.0 * units.meter,
+    ro=r_mod,
+)
 
-fuel = th.THComponent(name="fuel",
-                      mat=Fuel,
-                      vol=vol_fuel,
-                      T0=t_fuel,
-                      alpha_temp=alpha_fuel,
-                      timer=ti,
-                      heatgen=True,
-                      power_tot=power_tot / n_pebbles,
-                      sph=True,
-                      ri=r_mod,
-                      ro=r_fuel
-                      )
-shell = th.THComponent(name="shell",
-                       mat=Shell,
-                       vol=vol_shell,
-                       T0=t_shell,
-                       alpha_temp=alpha_shell,
-                       timer=ti,
-                       sph=True,
-                       ri=r_fuel,
-                       ro=r_shell)
+fuel = th.THComponent(
+    name="fuel",
+    mat=Fuel,
+    vol=vol_fuel,
+    T0=t_fuel,
+    alpha_temp=alpha_fuel,
+    timer=ti,
+    heatgen=True,
+    power_tot=power_tot / n_pebbles,
+    sph=True,
+    ri=r_mod,
+    ro=r_fuel,
+)
+shell = th.THComponent(
+    name="shell",
+    mat=Shell,
+    vol=vol_shell,
+    T0=t_shell,
+    alpha_temp=alpha_shell,
+    timer=ti,
+    sph=True,
+    ri=r_fuel,
+    ro=r_shell,
+)
 
 # mesh size for the fuel pebble FVM calculation
 l = 0.0005 * units.meter
 comp_list = mod.mesh(l)
 comp_list.extend(fuel.mesh(l))
 comp_list.extend(shell.mesh(l))
-pebble = th.THSuperComponent('pebble', t_shell, comp_list, timer=ti)
+pebble = th.THSuperComponent("pebble", t_shell, comp_list, timer=ti)
 # Add convective boundary condition to the pebble
-pebble.add_conv_bc('cool', h=h_cool)
+pebble.add_conv_bc("cool", h=h_cool)
 
-cool = th.THComponent(name="cool",
-                      mat=cool,
-                      vol=vol_cool,
-                      T0=t_cool,
-                      alpha_temp=alpha_cool,
-                      timer=ti)
+cool = th.THComponent(
+    name="cool", mat=cool, vol=vol_cool, T0=t_cool, alpha_temp=alpha_cool, timer=ti
+)
 # The coolant convects to the shell
-cool.add_convection('pebble', h=h_cool, area=a_pb)
-cool.add_advection('cool', m_flow / n_pebbles, t_inlet, cp=cool.cp)
+cool.add_convection("pebble", h=h_cool, area=a_pb)
+cool.add_advection("cool", m_flow / n_pebbles, t_inlet, cp=cool.cp)
 
 components = []
 for i in range(0, len(pebble.sub_comp)):

@@ -25,11 +25,13 @@ class Kernel(Material):
         :param heatgen: is this material a heat generator (fuel)
         :type heatgen: bool
         """
-        Material.__init__(self,
-                          name=name,
-                          k=self.thermal_conductivity(),
-                          cp=self.specific_heat_capacity(),
-                          dm=self.density())
+        Material.__init__(
+            self,
+            name=name,
+            k=self.thermal_conductivity(),
+            cp=self.specific_heat_capacity(),
+            dm=self.density(),
+        )
 
     def thermal_conductivity(self):
         """TRISO Kernel thermal conductivity in [W/m-K]
@@ -64,7 +66,7 @@ class Kernel(Material):
         that work.
         """
         ortensi = 0.3 * units.joule / (units.g * units.kelvin)  # [J/g/K]
-        return ortensi.to('joule/kg/kelvin')  # [J/kg/K]
+        return ortensi.to("joule/kg/kelvin")  # [J/kg/K]
 
     def density(self):
         """
@@ -81,5 +83,4 @@ class Kernel(Material):
         Berkeley, Department of Nuclear Engineering.
 
         """
-        return DensityModel(a=10500.0 * units.kg / (units.meter**3),
-                            model="constant")
+        return DensityModel(a=10500.0 * units.kg / (units.meter ** 3), model="constant")

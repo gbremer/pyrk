@@ -19,9 +19,9 @@ t_feedback = 0.05 * units.seconds
 
 # Temperature feedbacks of reactivity (Ragusa2009)
 # Fuel: Note Doppler model not implemented
-alpha_f = (-0.8841 * units.pcm / units.kelvin)
+alpha_f = -0.8841 * units.pcm / units.kelvin
 # Coolant
-alpha_c = (0.1263 * units.pcm / units.kelvin)
+alpha_c = 0.1263 * units.pcm / units.kelvin
 
 # Initial Temperatures
 t_fuel = 737.033 * units.kelvin
@@ -51,7 +51,7 @@ v_cool = 5.0 * units.meter / units.second
 # constant heat transfer approximation
 h_cool = 1.0e5 * (units.watt / units.kelvin / pow(units.meter, 2))
 # power density
-omega = 4.77E8 * units.watt / pow(units.meter, 3)
+omega = 4.77e8 * units.watt / pow(units.meter, 3)
 # total power, watts, thermal, per 1 fuel pin
 power_tot = omega * vol_fuel
 
@@ -83,43 +83,51 @@ spectrum = "fast"
 feedback = True
 
 # External Reactivity
-from reactivity_insertion \
-    import ImpulseReactivityInsertion as pulse
-rho_ext = pulse(timer=ti,
-                t_start=1.0 * units.seconds,
-                t_end=2.0 * units.seconds,
-                rho_init=0.0 * units.delta_k,
-                rho_max=0.05 * units.delta_k)
+from reactivity_insertion import ImpulseReactivityInsertion as pulse
+
+rho_ext = pulse(
+    timer=ti,
+    t_start=1.0 * units.seconds,
+    t_end=2.0 * units.seconds,
+    rho_init=0.0 * units.delta_k,
+    rho_max=0.05 * units.delta_k,
+)
 
 
-fuel = th.THComponent(name="fuel",
-                      mat=SFRMetal(name="sfrfuel"),
-                      vol=vol_fuel,
-                      T0=t_fuel,
-                      alpha_temp=alpha_f,
-                      timer=ti,
-                      heatgen=True,
-                      power_tot=power_tot)
+fuel = th.THComponent(
+    name="fuel",
+    mat=SFRMetal(name="sfrfuel"),
+    vol=vol_fuel,
+    T0=t_fuel,
+    alpha_temp=alpha_f,
+    timer=ti,
+    heatgen=True,
+    power_tot=power_tot,
+)
 
-cool = th.THComponent(name="cool",
-                      mat=Sodium(name="sodiumcoolant"),
-                      vol=vol_cool,
-                      T0=t_cool,
-                      alpha_temp=alpha_c,
-                      timer=ti)
+cool = th.THComponent(
+    name="cool",
+    mat=Sodium(name="sodiumcoolant"),
+    vol=vol_cool,
+    T0=t_cool,
+    alpha_temp=alpha_c,
+    timer=ti,
+)
 
-inlet = th.THComponent(name="inlet",
-                       mat=Sodium(name="sodiumcoolant"),
-                       vol=vol_cool,
-                       T0=t_inlet,
-                       alpha_temp=0.0 * units.pcm / units.K,
-                       timer=ti)
+inlet = th.THComponent(
+    name="inlet",
+    mat=Sodium(name="sodiumcoolant"),
+    vol=vol_cool,
+    T0=t_inlet,
+    alpha_temp=0.0 * units.pcm / units.K,
+    timer=ti,
+)
 
 # The clad convects with the coolant
-fuel.add_convection('cool', h=h_cool, area=a_fuel)
-cool.add_convection('fuel', h=h_cool, area=a_fuel)
+fuel.add_convection("cool", h=h_cool, area=a_fuel)
+cool.add_convection("fuel", h=h_cool, area=a_fuel)
 
 # The coolant flows
-cool.add_mass_trans('inlet', H=h_core, u=v_cool)
+cool.add_mass_trans("inlet", H=h_core, u=v_cool)
 
 components = [fuel, cool, inlet]

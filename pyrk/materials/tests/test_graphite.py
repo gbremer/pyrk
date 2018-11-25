@@ -15,7 +15,7 @@ tester = graphite.Graphite(name=name)
 
 k_graphite = 0.26 * units.watt / (units.meter * units.kelvin)
 cp_graphite = 1650.0 * units.joule / (units.kg * units.kelvin)
-rho_const = 1740. * units.kg / (units.meter**3)
+rho_const = 1740.0 * units.kg / (units.meter ** 3)
 
 
 def test_constructor():

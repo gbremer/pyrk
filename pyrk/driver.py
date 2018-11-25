@@ -58,16 +58,13 @@ def f_n(t, y, si):
     """
     n_n = 1 + si.n_pg + si.n_dg
     if len(y) < n_n:
-        msg = 'equation numbers %d ' % len(y)
-        msg += 'should be at least the number of neutronics equations %d' % n_n
+        msg = "equation numbers %d " % len(y)
+        msg += "should be at least the number of neutronics equations %d" % n_n
         raise ValueError(msg)
     end_pg = 1 + si.n_pg
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
-    f[i] = si.ne.dpdt(si.timer.ts,
-                      si.components,
-                      y[0],
-                      y[1:end_pg])
+    f[i] = si.ne.dpdt(si.timer.ts, si.components, y[0], y[1:end_pg])
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)
@@ -89,17 +86,15 @@ def f_th(t, y_th, si):
     :type si: SimInfo
     """
     t_idx = si.timer.t_idx(t * units.seconds)
-    f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
-                       'kelvin / second')
+    f = units.Quantity(
+        np.zeros(shape=(si.n_components(),), dtype=float), "kelvin / second"
+    )
     power = si.y[t_idx][0]
     o_i = 1 + si.n_pg
     o_f = 1 + si.n_pg + si.n_dg
     omegas = si.y[t_idx][o_i:o_f]
     for idx, comp in enumerate(si.components):
-        f[idx] = si.th.dtempdt(component=comp,
-                               power=power,
-                               omegas=omegas,
-                               t_idx=t_idx)
+        f[idx] = si.th.dtempdt(component=comp, power=power, omegas=omegas, t_idx=t_idx)
     return f
 
 
@@ -116,8 +111,9 @@ def y0(si):
     f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
-        f[i] = f[0] * \
-            si.ne._pd.betas()[j] / (si.ne._pd.lambdas()[j] * si.ne._pd._Lambda)
+        f[i] = (
+            f[0] * si.ne._pd.betas()[j] / (si.ne._pd.lambdas()[j] * si.ne._pd._Lambda)
+        )
     assert i == end_pg - 1
     for k in range(0, si.n_dg):
         i += 1
@@ -162,16 +158,15 @@ def solve(si, y, infile):
     :param infile: the imported infile module
     :type infile: imported module
     """
-    n = ode(f_n).set_integrator('dopri5')
-    n.set_initial_value(y0_n(si), si.timer.
-                        t0.magnitude)
+    n = ode(f_n).set_integrator("dopri5")
+    n.set_initial_value(y0_n(si), si.timer.t0.magnitude)
     n.set_f_params(si)
-    th = ode(f_th).set_integrator('dopri5', nsteps=infile.nsteps)
+    th = ode(f_th).set_integrator("dopri5", nsteps=infile.nsteps)
     th.set_initial_value(y0_th(si), si.timer.t0.magnitude)
     th.set_f_params(si)
-    while (n.successful() and
-           n.t < si.timer.tf.magnitude and
-           th.t < si.timer.tf.magnitude):
+    while (
+        n.successful() and n.t < si.timer.tf.magnitude and th.t < si.timer.tf.magnitude
+    ):
         si.timer.advance_one_timestep()
         si.db.record_all()
         n.integrate(si.timer.current_time().magnitude)
@@ -194,13 +189,15 @@ def log_results(si):
 
 
 def print_logo(curr_dir):
-    filename = os.path.join(curr_dir, 'logo.txt')
-    with open(filename, 'r') as logo:
-        pyrklog.critical("\nWelcome to PyRK.\n" +
-                         "(c) Kathryn D. Huff\n" +
-                         "Your simulation is starting.\n" +
-                         "Perhaps it's time for a coffee.\n" +
-                         logo.read())
+    filename = os.path.join(curr_dir, "logo.txt")
+    with open(filename, "r") as logo:
+        pyrklog.critical(
+            "\nWelcome to PyRK.\n"
+            + "(c) Kathryn D. Huff\n"
+            + "Your simulation is starting.\n"
+            + "Perhaps it's time for a coffee.\n"
+            + logo.read()
+        )
 
 
 def name_from_path(infile_path):
@@ -214,6 +211,7 @@ def name_from_path(infile_path):
     """
     import os.path
     import sys
+
     file_dir = os.path.dirname(infile_path)
     sys.path.append(file_dir)
     file_name = os.path.basename(infile_path)
@@ -237,23 +235,25 @@ def main(args, curr_dir):
     logger.set_up_pyrklog(args.logfile)
     infile = load_infile(args.infile)
     out_db = database.Database(filepath=args.outfile)
-    if not hasattr(infile, 'n_ref'):
+    if not hasattr(infile, "n_ref"):
         n_ref = 0
     else:
         n_ref = infile.n_ref
-    si = sim_info.SimInfo(timer=infile.ti,
-                          components=infile.components,
-                          iso=infile.fission_iso,
-                          e=infile.spectrum,
-                          n_precursors=infile.n_pg,
-                          n_decay=infile.n_dg,
-                          n_fic=n_ref,
-                          kappa=infile.kappa,
-                          feedback=infile.feedback,
-                          rho_ext=infile.rho_ext,
-                          plotdir=args.plotdir,
-                          infile=args.infile,
-                          db=out_db)
+    si = sim_info.SimInfo(
+        timer=infile.ti,
+        components=infile.components,
+        iso=infile.fission_iso,
+        e=infile.spectrum,
+        n_precursors=infile.n_pg,
+        n_decay=infile.n_dg,
+        n_fic=n_ref,
+        kappa=infile.kappa,
+        feedback=infile.feedback,
+        rho_ext=infile.rho_ext,
+        plotdir=args.plotdir,
+        infile=args.infile,
+        db=out_db,
+    )
     # TODO: think about weather to add n_ref to all input files, or put n_ref
     # in database files
     print_logo(curr_dir)
@@ -266,16 +266,14 @@ def main(args, curr_dir):
 """Run it as a script"""
 if __name__ == "__main__":
     curr_dir = os.path.dirname(__file__)
-    ap = argparse.ArgumentParser(description='PyRK parameters')
-    ap.add_argument('--infile', help='the name of the input file',
-                    default='input')
-    ap.add_argument('--logfile', help='the name of the log file',
-                    default='pyrk.log')
+    ap = argparse.ArgumentParser(description="PyRK parameters")
+    ap.add_argument("--infile", help="the name of the input file", default="input")
+    ap.add_argument("--logfile", help="the name of the log file", default="pyrk.log")
     ap.add_argument(
-        '--plotdir',
-        help='the name of the directory of output plots',
-        default='images')
-    ap.add_argument('--outfile', help='the name of the output database',
-                    default='pyrk.h5')
+        "--plotdir", help="the name of the directory of output plots", default="images"
+    )
+    ap.add_argument(
+        "--outfile", help="the name of the output database", default="pyrk.h5"
+    )
     args = ap.parse_args()
     main(args, curr_dir)

@@ -48,11 +48,13 @@ class StepReactivityInsertion(ReactivityInsertion):
                            t_step
     """
 
-    def __init__(self,
-                 timer,
-                 t_step=1.0 * units.seconds,
-                 rho_init=0.0 * units.delta_k,
-                 rho_final=1.0 * units.delta_k):
+    def __init__(
+        self,
+        timer,
+        t_step=1.0 * units.seconds,
+        rho_init=0.0 * units.delta_k,
+        rho_final=1.0 * units.delta_k,
+    ):
         """Returns a Heaviside step function as the reactivity insertion object
         for driving the transient.
 
@@ -65,8 +67,8 @@ class StepReactivityInsertion(ReactivityInsertion):
         :param rho_final: Final reactivity (after t_step)
         :type rho_final: float, units of delta_k
         """
-        self.rho_init = rho_init.to('delta_k')
-        self.rho_final = rho_final.to('delta_k')
+        self.rho_init = rho_init.to("delta_k")
+        self.rho_final = rho_final.to("delta_k")
         self.t_step = t_step
         ReactivityInsertion.__init__(self, timer=timer)
 
@@ -95,12 +97,14 @@ class ImpulseReactivityInsertion(ReactivityInsertion):
                             t_start         t_end
     """
 
-    def __init__(self,
-                 timer,
-                 t_start=1.0 * units.seconds,
-                 t_end=2.0 * units.seconds,
-                 rho_init=0.0 * units.delta_k,
-                 rho_max=1.0 * units.delta_k):
+    def __init__(
+        self,
+        timer,
+        t_start=1.0 * units.seconds,
+        t_end=2.0 * units.seconds,
+        rho_init=0.0 * units.delta_k,
+        rho_max=1.0 * units.delta_k,
+    ):
         self.t_start = t_start
         self.t_end = t_end
         self.rho_init = rho_init
@@ -132,14 +136,16 @@ class RampReactivityInsertion(ReactivityInsertion):
                          t_start    t_end
     """
 
-    def __init__(self,
-                 timer,
-                 t_start=1.0 * units.seconds,
-                 t_end=2.0 * units.seconds,
-                 rho_init=0.0 * units.delta_k,
-                 rho_rise=1.0 * units.delta_k,
-                 rho_final=1.0 * units.delta_k):
-        self.t_end = validation.validate_g('t_end', t_end, t_start)
+    def __init__(
+        self,
+        timer,
+        t_start=1.0 * units.seconds,
+        t_end=2.0 * units.seconds,
+        rho_init=0.0 * units.delta_k,
+        rho_rise=1.0 * units.delta_k,
+        rho_final=1.0 * units.delta_k,
+    ):
+        self.t_end = validation.validate_g("t_end", t_end, t_start)
         self.t_start = t_start
         self.rho_init = rho_init
         self.rho_rise = rho_rise
@@ -150,8 +156,7 @@ class RampReactivityInsertion(ReactivityInsertion):
         if x < self.timer.t_idx(self.t_start):
             return self.rho_init
         elif x <= self.timer.t_idx(self.t_end):
-            return self.rho_init + \
-                self.slope() * (x - self.timer.t_idx(self.t_start))
+            return self.rho_init + self.slope() * (x - self.timer.t_idx(self.t_start))
         else:
             return self.rho_final
 

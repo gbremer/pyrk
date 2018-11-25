@@ -14,11 +14,13 @@ class Graphite(Material):
         :param name: The name of the material (i.e., "fuel" or "cool")
         :type name: str.
         """
-        Material.__init__(self,
-                          name=name,
-                          k=self.thermal_conductivity(),
-                          cp=self.specific_heat_capacity(),
-                          dm=self.density())
+        Material.__init__(
+            self,
+            name=name,
+            k=self.thermal_conductivity(),
+            cp=self.specific_heat_capacity(),
+            dm=self.density(),
+        )
 
     def thermal_conductivity(self):
         """
@@ -85,5 +87,4 @@ class Graphite(Material):
         "1.74 kg/m^3". However, this is a units error. The number intended by
         that document was 1.74 g/cm^3, which corresponds to this model.
         """
-        return DensityModel(a=1740. * units.kg / (units.meter**3),
-                            model="constant")
+        return DensityModel(a=1740.0 * units.kg / (units.meter ** 3), model="constant")

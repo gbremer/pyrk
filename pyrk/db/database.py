@@ -34,10 +34,7 @@ class Database(object):
     provides utilities for interacting with it.
     """
 
-    def __init__(self, filepath='pyrk.h5',
-                 mode='w',
-                 title='PyRKDatabase'
-                ):
+    def __init__(self, filepath="pyrk.h5", mode="w", title="PyRKDatabase"):
         """Creates an hdf5 database for simulation information
 
         :param filepath: the location of the h5 file. e.g. 'pyrk.h5'
@@ -52,15 +49,13 @@ class Database(object):
         self.mode = mode
         self.title = title
         self.filepath = filepath
-        self.h5file = tb.File(filename=self.filepath,
-                              title=self.title,
-                              mode=self.mode)
+        self.h5file = tb.File(filename=self.filepath, title=self.title, mode=self.mode)
         self.groups = self.set_up_groups()
         self.tables = self.set_up_tables()
         self.make_groups()
         self.make_tables()
 
-    def add_group(self, groupname, grouptitle, path_to_group='/'):
+    def add_group(self, groupname, grouptitle, path_to_group="/"):
         """Creates a new group in the file
 
         :param groupname: name of the group to add
@@ -73,8 +68,7 @@ class Database(object):
         self.open_db()
         group = self.group_exists(path_to_group, groupname)
         if group is False:
-            group = self.h5file.create_group(path_to_group, groupname,
-                                             grouptitle)
+            group = self.h5file.create_group(path_to_group, groupname, grouptitle)
         return group
 
     def add_table(self, groupname, tablename, description, tabletitle):
@@ -92,10 +86,9 @@ class Database(object):
         """
         self.open_db()
         p = self.get_tablepath(groupname, tablename)
-        self.tablehandles[p] = self.h5file.create_table('/' + groupname,
-                                                        tablename,
-                                                        description,
-                                                        tabletitle)
+        self.tablehandles[p] = self.h5file.create_table(
+            "/" + groupname, tablename, description, tabletitle
+        )
         return self.tablehandles[p]
 
     def add_row(self, table, row_dict):
@@ -124,8 +117,7 @@ class Database(object):
         """
         self.open_db()
         try:
-            group = self.h5file.get_node(path_to_group,
-                                         name=groupname)
+            group = self.h5file.get_node(path_to_group, name=groupname)
         except tb.NoSuchNodeError:
             group = False
         return group
@@ -136,7 +128,7 @@ class Database(object):
         if self.h5file.isopen is True:
             return self.h5file
         else:
-            self.h5file = tb.open_file(filename=self.filepath, mode='a')
+            self.h5file = tb.open_file(filename=self.filepath, mode="a")
             assert self.h5file.isopen
         return self.h5file
 
@@ -156,24 +148,29 @@ class Database(object):
     def delete_db(self):
         """If the database exists, delete it"""
         import os.path
+
         os.remove(self.filepath)
 
     def make_groups(self):
         """For each group in groups, add group to the db.
         """
         for g in self.groups:
-            self.add_group(groupname=g['groupname'],
-                           grouptitle=g['grouptitle'],
-                           path_to_group=g['path'])
+            self.add_group(
+                groupname=g["groupname"],
+                grouptitle=g["grouptitle"],
+                path_to_group=g["path"],
+            )
 
     def make_tables(self):
         """For each table in tables, add table to the db.
         """
         for t in self.tables:
-            self.add_table(groupname=t['groupname'],
-                           tablename=t['tablename'],
-                           description=t['description'],
-                           tabletitle=t['tabletitle'])
+            self.add_table(
+                groupname=t["groupname"],
+                tablename=t["tablename"],
+                description=t["description"],
+                tabletitle=t["tabletitle"],
+            )
 
     def set_up_groups(self):
         """We know what groups need to exist for a PyRK simulation. This is
@@ -182,15 +179,13 @@ class Database(object):
         :returns: groups that define the simulation in PyRK
         """
         groups = []
-        groups.append({'groupname': 'th',
-                       'grouptitle': 'TH',
-                       'path': '/'})
-        groups.append({'groupname': 'neutronics',
-                       'grouptitle': 'Neutronics',
-                       'path': '/'})
-        groups.append({'groupname': 'metadata',
-                       'grouptitle': 'Simulation Metadata',
-                       'path': '/'})
+        groups.append({"groupname": "th", "grouptitle": "TH", "path": "/"})
+        groups.append(
+            {"groupname": "neutronics", "grouptitle": "Neutronics", "path": "/"}
+        )
+        groups.append(
+            {"groupname": "metadata", "grouptitle": "Simulation Metadata", "path": "/"}
+        )
         return groups
 
     def set_up_tables(self):
@@ -200,42 +195,73 @@ class Database(object):
         :returns: tables that define the simulation in PyRK
         """
         tables = []
-        tables.append({'groupname': 'metadata',
-                       'tablename': 'sim_info',
-                       'description': desc.SimInfoRow,
-                       'tabletitle': 'Simulation Information'})
-        tables.append({'groupname': 'metadata',
-                       'tablename': 'sim_timeseries',
-                       'description': desc.SimTimeseriesRow,
-                       'tabletitle': 'Simulation Power Data'})
-        tables.append({'groupname': 'th',
-                       'tablename': 'th_params',
-                       'description': desc.ThMetadataRow,
-                       'tabletitle': 'TH Component Parameters'})
-        tables.append({'groupname': 'th',
-                       'tablename': 'th_timeseries',
-                       'description': desc.ThTimeseriesRow,
-                       'tabletitle': 'TH Timeseries'})
-        tables.append({'groupname': 'neutronics',
-                       'tablename': 'neutronics_timeseries',
-                       'description': desc.NeutronicsTimeseriesRow,
-                       'tabletitle': 'Neutronics Timeseries'})
-        tables.append({'groupname': 'neutronics',
-                       'tablename': 'neutronics_params',
-                       'description': desc.NeutronicsParamsRow,
-                       'tabletitle': 'Neutronics Metadata'})
-        tables.append({'groupname': 'neutronics',
-                       'tablename': 'zetas',
-                       'description': desc.ZetasTimestepRow,
-                       'tabletitle': 'Neutron Precursor Concentrations'})
-        tables.append({'groupname': 'neutronics',
-                       'tablename': 'omegas',
-                       'description': desc.OmegasTimestepRow,
-                       'tabletitle': 'Decay Heat Fractions'})
+        tables.append(
+            {
+                "groupname": "metadata",
+                "tablename": "sim_info",
+                "description": desc.SimInfoRow,
+                "tabletitle": "Simulation Information",
+            }
+        )
+        tables.append(
+            {
+                "groupname": "metadata",
+                "tablename": "sim_timeseries",
+                "description": desc.SimTimeseriesRow,
+                "tabletitle": "Simulation Power Data",
+            }
+        )
+        tables.append(
+            {
+                "groupname": "th",
+                "tablename": "th_params",
+                "description": desc.ThMetadataRow,
+                "tabletitle": "TH Component Parameters",
+            }
+        )
+        tables.append(
+            {
+                "groupname": "th",
+                "tablename": "th_timeseries",
+                "description": desc.ThTimeseriesRow,
+                "tabletitle": "TH Timeseries",
+            }
+        )
+        tables.append(
+            {
+                "groupname": "neutronics",
+                "tablename": "neutronics_timeseries",
+                "description": desc.NeutronicsTimeseriesRow,
+                "tabletitle": "Neutronics Timeseries",
+            }
+        )
+        tables.append(
+            {
+                "groupname": "neutronics",
+                "tablename": "neutronics_params",
+                "description": desc.NeutronicsParamsRow,
+                "tabletitle": "Neutronics Metadata",
+            }
+        )
+        tables.append(
+            {
+                "groupname": "neutronics",
+                "tablename": "zetas",
+                "description": desc.ZetasTimestepRow,
+                "tabletitle": "Neutron Precursor Concentrations",
+            }
+        )
+        tables.append(
+            {
+                "groupname": "neutronics",
+                "tablename": "omegas",
+                "description": desc.OmegasTimestepRow,
+                "tabletitle": "Decay Heat Fractions",
+            }
+        )
         return tables
 
-    def register_recorder(self, groupname, tablename, recorder,
-                          timeseries=False):
+    def register_recorder(self, groupname, tablename, recorder, timeseries=False):
         """Register an entity that wants to represent itself in the Database
 
         :param groupname: name of the group to add
@@ -264,7 +290,7 @@ class Database(object):
         :returns: the path to the table in the group
         :rtype: str
         """
-        return '/' + groupname + '/' + tablename
+        return "/" + groupname + "/" + tablename
 
     def get_table(self, groupname, tablename):
         """Returns the table handle for a table within a group
